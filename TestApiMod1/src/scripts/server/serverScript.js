@@ -1,10 +1,12 @@
 const IDENTS = {
     mobs: {
+        cow: "minecraft:cow",
+        creeper: "minecraft:creeper",
+        enderman: "minecraft:enderman",
+        horse: "minecraft:horse",
         pig: "minecraft:pig",
         sheep: "minecraft:sheep",
-        creeper: "minecraft:creeper",
-        horse: "minecraft:horse",
-        cow: "minecraft:cow",
+        zombie: "minecraft:zombie"
     },
     blocks: {
         planks: "planks",
@@ -85,6 +87,7 @@ serverSystem.onPlayerAttackedEntity = function (entityData) {
     //summonLightining(getPosition(entity));
 };
 
+
 serverSystem.onEntityDeath = function (eventData) {
     let entity = eventData.entity;
     //chatMessage("something died!" + JSON.stringify(entity));
@@ -93,8 +96,9 @@ serverSystem.onEntityDeath = function (eventData) {
     if (entity.__identifier__ === IDENTS.mobs.sheep) {
         this.sheepKilled(entity);
     } else if (entity.__identifier__ === IDENTS.mobs.cow) {
-
         this.makeHouse(entity);
+    } else if (entity.__identifier__ === IDENTS.mobs.zombie) {
+        this.zombieKilled(entity);
     }
 
 };
@@ -192,6 +196,26 @@ serverSystem.makeHouse = function (entity) {
 
 };
 
+
+serverSystem.zombieKilled = function (entity) {
+    let deadPosition = getPosition(entity);
+
+    let mobsToSpawn = 4;
+
+    for (let i = 0; i < mobsToSpawn; i++) {
+        chatMessage("making enderman " + i);
+
+        let enderman = this.createEntity("entity", IDENTS.mobs.enderman);
+
+        let posComponent = this.createComponent(enderman, IDENTS.components.position);
+
+        posComponent.data.x = deadPosition.data.x;
+        posComponent.data.y = deadPosition.data.y;
+        posComponent.data.z = deadPosition.data.z;
+        this.applyComponentChanges(enderman, posComponent);
+    }
+
+};
 
 serverSystem.sheepKilled = function (entity) {
     chatMessage("we killed a sheep!!");
