@@ -10,6 +10,10 @@ const IDENTS = {
         planks: "planks",
         air: "air"
     },
+    door: {
+        spruce: "spruce_door"
+    },
+    glass_pane: "glass_pane",
     components: {
         position: "minecraft:position",
         rotation: "minecraft:rotation",
@@ -97,56 +101,94 @@ serverSystem.onEntityDeath = function (eventData) {
 
 
 serverSystem.makeHouse = function (entity) {
-    let position = getPosition(entity);
-    chatMessage("we killed a cow at " + JSON.stringify(position.data));
+
+    try {
 
 
-    //empty inside to be 3 tall
-    //10 wide
-    //12 long
+        let srcPosition = getPosition(entity);
+        chatMessage("we killed a cow at " + JSON.stringify(srcPosition.data));
 
 
-    let houseWidth = 10;
-    let houseLength = 12;
-    let houseHeight = 5;
-
-    let rightX = position.data.x + (houseWidth / 2);
-    let leftX = position.data.x - (houseWidth / 2);
-    let backZ = position.data.z - (houseLength / 2);
-    let frontZ = position.data.z + (houseLength / 2);
-    let bottomY = position.data.y - 1;
-    let topY = position.data.y + houseHeight - 1;
-
-    let PADDING = 10;
-
-    //clear the whole space
-    fillCmd(leftX - PADDING, bottomY, frontZ + PADDING,
-        rightX + PADDING, topY + PADDING, backZ - PADDING, IDENTS.blocks.air);
+        //empty inside to be 3 tall
+        //10 wide
+        //12 long
 
 
-    //make floor
-    fillCmd(leftX, bottomY, frontZ, rightX, bottomY, backZ, IDENTS.blocks.planks, BLOCK_DATA.planks.acacia);
+        let houseWidth = 10;
+        let houseLength = 12;
+        let houseHeight = 5;
 
-    //make ceiling
-    fillCmd(leftX, topY, frontZ, rightX, topY, backZ, IDENTS.blocks.planks, BLOCK_DATA.planks.jungle);
+        let rightX = srcPosition.data.x + (houseWidth / 2);
+        let leftX = srcPosition.data.x - (houseWidth / 2);
+        let backZ = srcPosition.data.z - (houseLength / 2);
+        let frontZ = srcPosition.data.z + (houseLength / 2);
+        let bottomY = srcPosition.data.y - 1;
+        let topY = srcPosition.data.y + houseHeight - 1;
 
-    //left wall
-    fillCmd(leftX, bottomY, frontZ, leftX, topY, backZ, IDENTS.blocks.planks, BLOCK_DATA.planks.darkOak);
+        let PADDING = 10;
 
-    //right wall
-    fillCmd(rightX, bottomY, frontZ, rightX, topY, backZ, IDENTS.blocks.planks, BLOCK_DATA.planks.darkOak);
+        //clear the whole space
+        fillCmd(leftX - PADDING, bottomY, frontZ + PADDING,
+            rightX + PADDING, topY + PADDING, backZ - PADDING, IDENTS.blocks.air);
 
-    //front wall
-    fillCmd(leftX, bottomY, frontZ, rightX, topY, frontZ, IDENTS.blocks.planks, BLOCK_DATA.planks.birch);
 
-    //back wall
-    fillCmd(leftX, bottomY, backZ, rightX, topY, backZ, IDENTS.blocks.planks, BLOCK_DATA.planks.darkOak);
+        //make floor
+        fillCmd(leftX, bottomY, frontZ, rightX, bottomY, backZ, IDENTS.blocks.planks, BLOCK_DATA.planks.acacia);
 
-    //make right wall door
-    fillCmd(rightX, position.data.y, position.data.z - 1,
-        rightX, position.data.y + 2, position.data.z + 1,
-        IDENTS.blocks.air
-    );
+        //make ceiling
+        fillCmd(leftX, topY, frontZ, rightX, topY, backZ, IDENTS.blocks.planks, BLOCK_DATA.planks.jungle);
+
+        //left wall
+        fillCmd(leftX, bottomY, frontZ, leftX, topY, backZ, IDENTS.blocks.planks, BLOCK_DATA.planks.darkOak);
+
+        //right wall
+        fillCmd(rightX, bottomY, frontZ, rightX, topY, backZ, IDENTS.blocks.planks, BLOCK_DATA.planks.darkOak);
+
+        //front wall
+        fillCmd(leftX, bottomY, frontZ, rightX, topY, frontZ, IDENTS.blocks.planks, BLOCK_DATA.planks.birch);
+
+        //back wall
+        fillCmd(leftX, bottomY, backZ, rightX, topY, backZ, IDENTS.blocks.planks, BLOCK_DATA.planks.darkOak);
+
+
+        //cleear a space for the front wall door
+        fillCmd(srcPosition.data.x - 1, srcPosition.data.y, frontZ,
+            srcPosition.data.x + 1, srcPosition.data.y + 2, frontZ,
+            IDENTS.blocks.planks, BLOCK_DATA.planks.spruce
+        );
+
+        //place the doors
+        fillCmd(srcPosition.data.x - 1, srcPosition.data.y, frontZ,
+            srcPosition.data.x - 1, srcPosition.data.y, frontZ,
+            IDENTS.door.spruce
+        );
+
+        fillCmd(srcPosition.data.x + 1, srcPosition.data.y, frontZ,
+            srcPosition.data.x + 1, srcPosition.data.y, frontZ,
+            IDENTS.door.spruce
+        );
+
+        //place the windows
+        //left
+        fillCmd(leftX, srcPosition.data.y + 1, srcPosition.data.z - 1,
+            leftX, srcPosition.data.y + 1, srcPosition.data.z + 1,
+            IDENTS.glass_pane
+        );
+        //right
+        fillCmd(rightX, srcPosition.data.y + 1, srcPosition.data.z - 1,
+            rightX, srcPosition.data.y + 1, srcPosition.data.z + 1,
+            IDENTS.glass_pane
+        );
+        //back
+        fillCmd(srcPosition.data.x - 1, srcPosition.data.y + 1, backZ,
+            srcPosition.data.x + 1, srcPosition.data.y + 1, backZ,
+            IDENTS.glass_pane
+        );
+
+
+    } catch (exception) {
+        chatMessage("Error! " + exception)
+    }
 
 };
 

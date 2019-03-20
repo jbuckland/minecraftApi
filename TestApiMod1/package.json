@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "config": {
     "addOnDir": "C:\\Users\\john\\AppData\\Local\\Packages\\Microsoft.MinecraftUWP_8wekyb3d8bbwe\\LocalState\\games\\com.mojang\\behavior_packs",
-    "testWorldDir": "C:\\Users\\john\\AppData\\Local\\Packages\\Microsoft.MinecraftUWP_8wekyb3d8bbwe\\LocalState\\games\\com.mojang\\minecraftWorlds\\uRV0XJWcAQA=\\behavior_packs"
+    "testWorldDir": "C:\\Users\\john\\AppData\\Local\\Packages\\Microsoft.MinecraftUWP_8wekyb3d8bbwe\\LocalState\\games\\com.mojang\\minecraftWorlds\\JmCSXLQ0AAA=\\behavior_packs"
   },
   "scripts": {
     "deploy": "robocopy ./src %npm_package_config_addOnDir%\\%npm_package_name% /E /PURGE",
